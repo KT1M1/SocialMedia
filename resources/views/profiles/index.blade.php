@@ -9,10 +9,10 @@
         <div class="col-9 pt-5">
             <div>
                 <h1>{{$user->username}}</h1>
-                <a href="#">Add new Post</a>
+                <a href="/p/create">Add new Post</a>
             </div>
             <div class="d-flex">
-                <div style="padding-right: 10px"><strong>153</strong> posts</div>
+                <div style="padding-right: 10px"><strong>{{$user->posts->count()}}</strong> posts</div>
                 <div style="padding-right: 10px"><strong>23k</strong> followers</div>
                 <div style="padding-right: 10px"><strong>18k</strong> following</div>
             </div>
@@ -22,15 +22,13 @@
         </div>
     </div>
     <div class="row pt-4">
-        <div class="col-4">
-            <img src="https://img.freepik.com/free-photo/3d-snow-grunge-texture-background_1048-11509.jpg?t=st=1730574940~exp=1730578540~hmac=345f2f8333b00c26cdc0202d8a6afeaa0fb18eee12d5c88e7e64d8366fd0e493&w=1060" class="w-100" alt="" srcset="">
-        </div>
-        <div class="col-4">
-            <img src="https://img.freepik.com/free-photo/3d-snow-grunge-texture-background_1048-11509.jpg?t=st=1730574940~exp=1730578540~hmac=345f2f8333b00c26cdc0202d8a6afeaa0fb18eee12d5c88e7e64d8366fd0e493&w=1060" class="w-100" alt="" srcset="">
-        </div>
-        <div class="col-4">
-            <img src="https://img.freepik.com/free-photo/3d-snow-grunge-texture-background_1048-11509.jpg?t=st=1730574940~exp=1730578540~hmac=345f2f8333b00c26cdc0202d8a6afeaa0fb18eee12d5c88e7e64d8366fd0e493&w=1060" class="w-100" alt="" srcset="">
-        </div>
+        @foreach($user->posts as $post)
+            <div class="col-4 pb-4">
+                <a href="/p/{{$post->id}}">
+                    <img src="/storage/{{$post->image}}" class="w-100" alt="" srcset="">
+                </a>
+            </div>
+        @endforeach
     </div>
     
 </div>

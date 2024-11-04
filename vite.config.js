@@ -14,9 +14,4 @@ export default defineConfig({
         }),
         react(),
     ],
-    server: {
-        host: '127.0.0.1', // Explicitly using IPv4 localhost
-        port: 5174,
-        strictPort: true,
-    },
 });

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Post;
 
 class PostsController extends Controller
 {
@@ -20,11 +21,21 @@ class PostsController extends Controller
     {
         $data = request()->validate([
             'caption' => 'required',
-            'image' => 'required | image',
+            'image' => ['required', 'image'],
+        ]);
+        
+        $imagePath = request('image')->store('uploads', 'public');
+
+        auth()->user()->posts()->create([
+            'caption' => $data['caption'],
+            'image' => $imagePath,
         ]);
 
-        auth()->user()->posts()->create($data);
+        return redirect('/profile/' .auth()->user()->id);
+    }
 
-        dd(request()->all());
+    public function show(Post $post)
+    {
+        return view('posts.show', compact('post'));
     }
 }
