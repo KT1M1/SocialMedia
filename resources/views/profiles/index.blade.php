@@ -4,13 +4,20 @@
 <div class="container">
     <div class="row">
         <div class="col-3 pt-5">
-            <img src="https://img.freepik.com/free-photo/3d-snow-grunge-texture-background_1048-11509.jpg?t=st=1730574940~exp=1730578540~hmac=345f2f8333b00c26cdc0202d8a6afeaa0fb18eee12d5c88e7e64d8366fd0e493&w=1060" style="img-flex; border-radius: 50%; max-width: 300px" alt="">
+            <img src="{{ $user->profile->profileImage() }}" alt="Profile Picture" class="rounded-circle" style="max-width: 300px">
         </div>
         <div class="col-9 pt-5">
-            <div>
+            <div class="d-flex justify-content-between align-items-baseline">
                 <h1>{{$user->username}}</h1>
-                <a href="/p/create">Add new Post</a>
+                @can('update', $user->profile)
+                    <a href="/p/create">Add new Post</a>
+                @endcan
             </div>
+
+            @can('update', $user->profile)
+                <a href="/profile/{{$user->id}}/edit">Edit Profile</a>
+            @endcan
+
             <div class="d-flex">
                 <div style="padding-right: 10px"><strong>{{$user->posts->count()}}</strong> posts</div>
                 <div style="padding-right: 10px"><strong>23k</strong> followers</div>
