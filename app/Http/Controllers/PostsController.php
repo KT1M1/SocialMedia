@@ -47,4 +47,15 @@ class PostsController extends Controller
     {
         return view('posts.show', compact('post'));
     }
+
+    public function destroy(Post $post)
+    {
+        if (auth()->id() !== $post->user_id) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $post->delete();
+        
+        return redirect('/profile/' . auth()->id())->with('success', 'Post deleted successfully.');
+    }
 }

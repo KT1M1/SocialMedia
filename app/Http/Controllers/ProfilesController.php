@@ -10,10 +10,7 @@ class ProfilesController extends Controller
 {
     public function index(User $user)
     {
-
         $follows = (auth()->user()) ? auth()->user()->following->contains($user->id) : false;
-
-        //dd($follows);
 
         return view('profiles.index', compact('user', 'follows'));
     }
@@ -29,23 +26,22 @@ class ProfilesController extends Controller
     {
         $this->authorize('update', $user->profile);
 
+        // Validation: Fields can be nullable to allow clearing them
         $data = request()->validate([
-            'title' => 'required',
-            'description' => 'required',
-            'url' => 'url',
-            'image' => 'image',
+            'title' => 'nullable|string|max:255',   // Title can be cleared
+            'description' => 'nullable|string',    // Description can be cleared
+            'url' => 'nullable|url',               // URL can be cleared
+            'image' => 'nullable|image',           // Image is optional
         ]);
 
-        $imagePath = $user->profile->image ?? null; 
-
-        if(request('image')){
+        // Handle image upload (if provided)
+        if (request('image')) {
             $imagePath = request('image')->store('profile', 'public');
+            $data['image'] = $imagePath;
         }
 
-        auth()->user()->profile->update(array_merge(
-            $data,
-            ['image' => $imagePath]
-        ));
+        // Update the profile with the provided data
+        auth()->user()->profile->update($data);
 
         return redirect("/profile/{$user->id}");
     }
