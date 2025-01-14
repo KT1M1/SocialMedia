@@ -5,11 +5,7 @@
     <div class="row">
         <!-- Profile Picture Section -->
         <div class="col-md-4 col-sm-12 text-center pt-3">
-            <img 
-                src="{{ $user->profile->profileImage() }}" 
-                alt="Profile Picture" 
-                class="rounded-circle img-fluid mb-3" 
-                style="max-width: 200px">
+            <img src="{{ $user->profile->profileImage() }}" alt="Profile Picture" class="rounded-circle img-fluid mb-3"  style="width: 200px; height: 200px; object-fit: cover">
         </div>
 
         <!-- Profile Info Section -->
@@ -39,7 +35,7 @@
 
                 <!-- Profile Description -->
                 <div class="mt-4">
-                    <div class="font-weight-bold">{{ $user->profile->title }}</div>
+                    <div class="fw-bold">{{ $user->profile->title }}</div>
                     <div>{{ $user->profile->description }}</div>
                     <a href="{{ $user->profile->url }}" target="_blank">{{ $user->profile->url }}</a>
                 </div>

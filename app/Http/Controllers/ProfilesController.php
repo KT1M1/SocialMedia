@@ -22,21 +22,32 @@ class ProfilesController extends Controller
         return view('profiles.edit', compact('user'));
     }
 
-    public function update(User $user)
+    public function update(Request $request, User $user)
     {
         $this->authorize('update', $user->profile);
 
-        // Validation: Fields can be nullable to allow clearing them
-        $data = request()->validate([
-            'title' => 'nullable|string|max:255',   // Title can be cleared
-            'description' => 'nullable|string',    // Description can be cleared
-            'url' => 'nullable|url',               // URL can be cleared
-            'image' => 'nullable|image',           // Image is optional
+        // Validate the incoming request
+        $data = $request->validate([
+            'title' => 'nullable|string|max:255',
+            'description' => 'nullable|string',
+            'url' => 'nullable|url',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        // Handle image upload (if provided)
-        if (request('image')) {
-            $imagePath = request('image')->store('profile', 'public');
+        if ($request->hasFile('image')) {
+            // Store the uploaded image
+            $imagePath = $request->file('image')->store('profile', 'public');
+
+            // Resize and crop the image using Intervention Image
+            $image = \Intervention\Image\ImageManager::gd()
+                ->read(public_path("storage/{$imagePath}"))
+                ->resize(600, 600, function ($constraint) {
+                    $constraint->aspectRatio();
+                    $constraint->upsize();
+                })
+                ->crop(500, 500, (600 - 500) / 2, (600 - 500) / 2);  // Crop from the center
+            $image->save();
+
             $data['image'] = $imagePath;
         }
 
