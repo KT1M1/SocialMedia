@@ -15,6 +15,10 @@
 
     <!-- Scripts -->
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
+    @php
+        use Illuminate\Support\Facades\Route;
+        use Illuminate\Support\Facades\Auth;
+    @endphp
 </head>
 <body>
     <div id="app">

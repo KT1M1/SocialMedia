@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Post;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
 
 class PostsController extends Controller
 {
@@ -26,21 +28,32 @@ class PostsController extends Controller
         return view('posts.create');
     }
 
-    public function store()
+    public function store(Request $request)
     {
-        $data = request()->validate([
+        // Validate the incoming request
+        $data = $request->validate([
             'caption' => 'required',
-            'image' => ['required', 'image'],
+            'image' => ['required', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
         ]);
-        
-        $imagePath = request('image')->store('uploads', 'public');
+
+        // Store the uploaded image
+        $imagePath = $request->file('image')->store('uploads', 'public');
+
+        $manager = new ImageManager(new Driver());
+        $image = $manager->read(public_path("storage/{$imagePath}"));
+
+        // Crop the image
+        $image->cover(1600, 1600);
+
+        // Save the processed image
+        $image->toJpeg()->save(public_path("storage/{$imagePath}"));
 
         auth()->user()->posts()->create([
             'caption' => $data['caption'],
             'image' => $imagePath,
         ]);
 
-        return redirect('/profile/' .auth()->user()->id);
+        return redirect('/profile/' . auth()->user()->id);
     }
 
     public function show(Post $post)
@@ -54,8 +67,14 @@ class PostsController extends Controller
             abort(403, 'Unauthorized action.');
         }
 
+        // Delete the post's associated image from storage after post deletion
+        $imagePath = $post->image;
+        if ($imagePath && file_exists(public_path("storage/{$imagePath}"))) {
+            unlink(public_path("storage/{$imagePath}"));
+        }
+
         $post->delete();
-        
+
         return redirect('/profile/' . auth()->id())->with('success', 'Post deleted successfully.');
     }
 }

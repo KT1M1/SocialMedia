@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
-use Intervention\Image\Facades\Image;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
 
 class ProfilesController extends Controller
 {
@@ -38,15 +39,21 @@ class ProfilesController extends Controller
             // Store the uploaded image
             $imagePath = $request->file('image')->store('profile', 'public');
 
-            // Resize and crop the image using Intervention Image
-            $image = \Intervention\Image\ImageManager::gd()
-                ->read(public_path("storage/{$imagePath}"))
-                ->resize(600, 600, function ($constraint) {
-                    $constraint->aspectRatio();
-                    $constraint->upsize();
-                })
-                ->crop(500, 500, (600 - 500) / 2, (600 - 500) / 2);  // Crop from the center
-            $image->save();
+            // Process the uploaded image
+            $manager = new ImageManager(new Driver());
+            $image = $manager->read(public_path("storage/{$imagePath}"));
+
+            // Crop to 1:1 ratio from the center
+            $image->cover(400, 400);
+
+            // Save the cropped image
+            $image->toJpeg()->save(public_path("storage/{$imagePath}"));
+
+            // Delete the old image after the new image has been successfully saved
+            $oldImage = $user->profile->image;
+            if ($oldImage && $oldImage !== 'default.png' && file_exists(public_path("storage/{$oldImage}"))) {
+                unlink(public_path("storage/{$oldImage}"));
+            }
 
             $data['image'] = $imagePath;
         }
