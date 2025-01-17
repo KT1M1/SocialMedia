@@ -3,41 +3,49 @@
 @section('content')
 <div class="container py-4">
     @foreach($posts as $post)
-    <!-- Post Section -->
-    <div class="row mb-5">
-        <!-- Post Header: User Profile -->
-        <div class="col-12 col-md-8 offset-md-2">
-            <div class="d-flex align-items-center mb-2">
-                <div>
-                    <a href="/profile/{{ $post->user->id }}">
-                        <img src="{{ $post->user->profile->profileImage() }}" alt="profile image" class="rounded-circle" style="width:40px; height:40px;">
-                    </a>
+        <!-- Post Section -->
+        <div class="row mb-5">
+            <!-- Post Header: User Profile -->
+            <div class="col-12 col-md-8 offset-md-2">
+                <div class="d-flex align-items-center mb-2">
+                    <div>
+                        <a href="/profile/{{ $post->user->id }}">
+                            <img src="{{ $post->user->profile->profileImage() }}" alt="profile image" class="rounded-circle" style="width:40px; height:40px;">
+                        </a>
+                    </div>
+                    <div class="ms-2">
+                        <a href="/profile/{{ $post->user->id }}" class="text-decoration-none text-dark fw-bold">
+                            {{ $post->user->username }}
+                        </a>
+                    </div>
                 </div>
-                <div class="ms-2">
+            </div>
+
+            <!-- Post Image -->
+            <div class="col-12 col-md-8 offset-md-2">
+                <a href="/p/{{ $post->id }}">
+                    <img src="/storage/{{ $post->image }}" class="img-fluid rounded" alt="Post Image">
+                </a>
+            </div>
+
+            <!-- Post Caption -->
+            <div class="col-12 col-md-8 offset-md-2 mt-2">
+                <p class="m-0">
                     <a href="/profile/{{ $post->user->id }}" class="text-decoration-none text-dark fw-bold">
                         {{ $post->user->username }}
                     </a>
-                </div>
+                    {{ $post->caption }}
+                </p>
+            </div>
+
+            <!-- Like Button -->
+            <div class="col-12 col-md-8 offset-md-2 mt-2">
+                <like-button post-id="{{ $post->id }}"
+                    :is-liked="{{ auth()->user() && $post->likes->contains('user_id', auth()->id()) ? 'true' : 'false' }}"
+                    :initial-likes-count="{{ $post->likes->count() }}">
+                </like-button>
             </div>
         </div>
-
-        <!-- Post Image -->
-        <div class="col-12 col-md-8 offset-md-2">
-            <a href="/p/{{ $post->id }}">
-                <img src="/storage/{{ $post->image }}" class="img-fluid rounded" alt="Post Image">
-            </a>
-        </div>
-
-        <!-- Post Caption -->
-        <div class="col-12 col-md-8 offset-md-2 mt-2">
-            <p class="m-0">
-                <a href="/profile/{{ $post->user->id }}" class="text-decoration-none text-dark fw-bold">
-                    {{ $post->user->username }}
-                </a>
-                {{ $post->caption }}
-            </p>
-        </div>
-    </div>
     @endforeach
 
     <!-- Pagination -->

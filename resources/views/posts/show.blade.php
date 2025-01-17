@@ -30,8 +30,7 @@
                     @else
                         <!-- Follow Button -->
                         <div class="ms-2">
-                            <follow-button 
-                                user-id="{{ $post->user->id }}" 
+                            <follow-button user-id="{{ $post->user->id }}"
                                 follows="{{ auth()->user() ? auth()->user()->following->contains($post->user->id) : false }}">
                             </follow-button>
                         </div>
@@ -55,6 +54,13 @@
             </p>
 
             <hr>
+
+            <!-- Like Button -->
+            <like-button 
+                post-id="{{ $post->id }}"
+                :is-liked="{{ auth()->user() && $post->likes->contains('user_id', auth()->id()) ? 'true' : 'false' }}"
+                :initial-likes-count="{{ $post->likes->count() }}">
+            </like-button>
 
             <p class="text-muted mt-2">
                 Posted on {{ $post->created_at->format('M d, Y H:i') }}

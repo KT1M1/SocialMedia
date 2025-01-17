@@ -19,7 +19,7 @@ class PostsController extends Controller
         $users = auth()->user()->following()->pluck('profiles.user_id');
 
         $posts = Post::whereIn('user_id', $users)->latest()->paginate(5);
-        
+
         return view('posts.index', compact('posts'));
     }
 
@@ -76,5 +76,23 @@ class PostsController extends Controller
         $post->delete();
 
         return redirect('/profile/' . auth()->id())->with('success', 'Post deleted successfully.');
+    }
+
+    public function like(Post $post)
+    {
+        $user = auth()->user();
+
+        $isLiked = $post->likes()->where('user_id', $user->id)->exists();
+
+        if ($isLiked) {
+            $post->likes()->where('user_id', $user->id)->delete(); // Unlike
+        } else {
+            $post->likes()->create(['user_id' => $user->id]); // Like
+        }
+
+        // Update like count
+        return response()->json([
+            'likes_count' => $post->likes()->count(),
+        ]);
     }
 }
