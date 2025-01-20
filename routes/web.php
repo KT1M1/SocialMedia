@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PostsController;
 use App\Http\Controllers\ProfilesController;
 use App\Http\Controllers\FollowsController;
+use App\Http\Controllers\SearchController;
 
 Auth::routes();
 
@@ -20,3 +21,5 @@ Route::post('like/{post}', [PostsController::class, 'like'])->name('posts.like')
 Route::get('/profile/{user}', [ProfilesController::class, 'index'])->name('profile.show');
 Route::get('/profile/{user}/edit', [ProfilesController::class, 'edit'])->name('profile.edit');
 Route::patch('/profile/{user}', [ProfilesController::class, 'update'])->name('profile.update');
+
+Route::get('/search', [SearchController::class, 'search'])->name('search');
