@@ -36,9 +36,11 @@
                     <ul class="navbar-nav me-auto"></ul>
 
                     <!-- Search Bar -->
-                    <div>
-                        <search-component></search-component>
-                    </div>
+                    @auth
+                        <div>
+                            <search-component></search-component>
+                        </div>
+                    @endauth
 
                     <!-- Right Side Of Navbar -->
                     <ul class="navbar-nav ms-auto">

@@ -6,6 +6,7 @@ use App\Http\Controllers\PostsController;
 use App\Http\Controllers\ProfilesController;
 use App\Http\Controllers\FollowsController;
 use App\Http\Controllers\SearchController;
+use App\Http\Controllers\CommentController;
 
 Auth::routes();
 
@@ -23,3 +24,8 @@ Route::get('/profile/{user}/edit', [ProfilesController::class, 'edit'])->name('p
 Route::patch('/profile/{user}', [ProfilesController::class, 'update'])->name('profile.update');
 
 Route::get('/search', [SearchController::class, 'search'])->name('search');
+
+Route::get('/p/{post}/comments', [CommentController::class, 'index'])->name('comments.index');
+Route::post('/p/{post}/comments', [CommentController::class, 'store'])->name('comments.store');
+Route::post('/p/comments/{id}/like', [CommentController::class, 'toggleLike'])->name('comments.toggleLike');
+Route::delete('/p/comments/{id}', [CommentController::class, 'destroy'])->name('comments.destroy');

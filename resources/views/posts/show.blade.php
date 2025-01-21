@@ -62,6 +62,11 @@
                 :initial-likes-count="{{ $post->likes->count() }}">
             </like-button>
 
+            <hr>
+
+            <!-- Comments Section -->
+            <comment-section :post-id="{{ $post->id }}" :user-id="{{ auth()->id() }}"></comment-section>
+
             <p class="text-muted mt-2">
                 Posted on {{ $post->created_at->format('M d, Y H:i') }}
             </p>
